@@ -17,11 +17,12 @@ const { logger } = require("../log");
 const { deleteState } = require("./state");
 const { buildScrollActionRow } = require("../components/scrollActionRow");
 const { getState } = require("./state");
+const {games, gameConfig } = require('../config/gamecornerConfig');
 const { eventNames } = require("../config/eventConfig");
 const { buildIdConfigSelectRow } = require("../components/idConfigSelectRow");
 const { addRewards, getRewardsString, flattenCategories, flattenRewards } = require("../utils/trainerUtils");
 
-const buildGameCornerSend = async ({ stateId=null, user=null, view="list", option=null} = {}) =>{
+const buildGamesSend = async ({ stateId=null, user=null, view="list", option=null} = {}) =>{
     //get state
     const state = getState(stateId);
 
@@ -46,12 +47,28 @@ const buildGameCornerSend = async ({ stateId=null, user=null, view="list", optio
             stateId: stateId,
         };
         const gamesSelectRow = buildIDConfigSelectRow(
-
-
-        )
+            Object.values(games),
+            gameConfig,
+            "Select a game to play:",
+            gamesSelectRowData,
+            eventNames.GAME_SELECT,
+            false
+        );
+        send.components.push(gamesSelectRow);
+    } else if (view === "game"){
+        const gameData = gameConfig[option];
+        if (gameData === undefined){
+            return {embed: null, err: `Invalid Game!`};
+        }
+        // get trainer
+        const trainer = await getTrainer(user);
+        if (trainer.err) {
+            return { embed: null, err: trainer.err };
+        }
+        //start game
     }
 }
 
 module.exports = {
-    buildGameCornerSend
+    buildGamesSend
 }

@@ -19,13 +19,29 @@ const buildGamesListEmbed = () => {
     });
     const embed = new EmbedBuilder();
     embed.setTitle(`Games`);
-    embed.setColor(0xA3A3A3);
+    embed.setColor(0xffffff);
     embed.setDescription(gameString);
     embed.setFooter({ text: `Play in the gamecenter to get coins for special prizes!` });
 
     return embed;
 }
 
+const buildGameEmbed = (gameId) => {
+    //used in games.js after view === "games" and before view === "game"
+    const gameData = gameConfig[gameId];
+    const embed = new EmbedBuilder();
+    embed.setTitle(`${gameData.emoji} ${gameData.name}`);
+    embed.setColor(0xffffff);
+    embed.setDescription(gameData.description);
+    embed.addFields({name: "Payout", value: gameData.payout, inline: false });
+    embed.setImage(gameData.sprite);
+    embed.setFooter({text: "Use the buttons to set an amount to bet." });
+
+    return embed;
+
+}
+
 module.exports ={
-    buildGamesListEmbed
+    buildGamesListEmbed,
+    buildGameEmbed
 }
